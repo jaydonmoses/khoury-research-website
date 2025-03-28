@@ -8,10 +8,12 @@ file_path = "khoury_faculty_data.csv"
 df = pd.read_csv(file_path)
 
 def get_faculty_data():
+    # Convert the DataFrame to a list of dictionaries for template rendering
     return df.to_dict(orient='records')
 
 @app.route('/')
 def index():
+    # Fetch faculty data and pass it to the template
     faculty_data = get_faculty_data()
     return render_template('index.html', faculty=faculty_data)
 
@@ -19,8 +21,9 @@ def index():
 def send_email():
     selected_emails = request.form.getlist('emails')
     if selected_emails:
-        mailto_link = f"mailto:{','.join(selected_emails)}"
-        return f"<script>window.location.href='{mailto_link}';</script>"
+        mailto_links = [f"mailto:{email}" for email in selected_emails]
+        script = "".join([f"window.open('{link}', '_blank');" for link in mailto_links])
+        return f"<script>{script}</script>"
     return "<script>alert('Please select at least one professor to email.'); window.history.back();</script>"
 
 if __name__ == '__main__':
