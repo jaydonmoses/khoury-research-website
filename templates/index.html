@@ -526,6 +526,52 @@
                 grid-template-columns: 1fr !important;
             }
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 20px;
+            width: 70%;
+            max-width: 900px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        /* Add this to prevent body scrolling when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
     </style>
 </head>
 <body>
@@ -823,7 +869,9 @@
                                     <a href="{{ faculty['Google Scholar'] }}" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
                                     {% endif %}
                                     {% if faculty.Email %}
-                                    <a href="mailto:{{ faculty.Email }}" title="Email"><i class="fas fa-envelope"></i></a>
+                                    <a href="{{ url_for('generate_email_page', faculty_email=faculty.Email) }}" target="_blank" title="Generate Email">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
                                     {% endif %}
                                 </div>
                             </td>
@@ -845,6 +893,13 @@
         <i class="fas fa-arrow-up"></i>
     </div>
     
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="emailGeneratorContent"></div>
+        </div>
+    </div>
+
     <script>
         $(document).ready(function() {
             const table = $('#facultyTable').DataTable({
@@ -912,6 +967,45 @@
                     $('.fab').fadeIn();
                 } else {
                     $('.fab').fadeOut();
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('emailModal');
+            const span = document.getElementsByClassName('close')[0];
+            
+            // Update email icon click handlers
+            document.querySelectorAll('.email-icon').forEach(icon => {
+                icon.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const facultyEmail = this.getAttribute('data-email');
+                    const response = await fetch(`/generate-email/${facultyEmail}`);
+                    const content = await response.text();
+                    document.getElementById('emailGeneratorContent').innerHTML = content;
+                    modal.style.display = 'block';
+                    document.body.classList.add('modal-open'); // Add class to body
+                });
+            });
+            
+            // Close modal handlers
+            span.onclick = function() {
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open'); // Remove class from body
+            }
+            
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                    document.body.classList.remove('modal-open'); // Remove class from body
+                }
+            }
+
+            // Handle escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                    document.body.classList.remove('modal-open');
                 }
             });
         });

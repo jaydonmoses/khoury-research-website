@@ -1,2 +1,2 @@
-# khoury-research-website
-A python web scraping website that allows you to contact any Khoury College staff at Northeastern University.
+# Undergrad Assist
+A flask application that helps students to reach out to multiple professors and send emails with variations 

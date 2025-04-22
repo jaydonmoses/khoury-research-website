@@ -3,124 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate Email</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Generate Email - Faculty Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
-        /* Dark theme styling */
+        :root {
+            --primary: #4a90e2;
+            --dark: #2c3e50;
+            --light: #f5f6fa;
+            --gray: #95a5a6;
+        }
+
         body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-        }
-
-        h1, h2, h3 {
-            color: #ffcc00;
-        }
-
-        input, textarea, button {
-            background-color: #1e1e1e;
-            color: #ffffff;
-            border: 1px solid #444;
-            border-radius: 5px;
-            padding: 10px;
-            margin: 5px 0;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #333;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #2c3e50, #3498db, #2980b9, #34495e);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
         }
 
         .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem;
         }
 
-        .card {
-            background-color: #1e1e1e;
-            border: 1px solid #444;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        .card h2, .card h3 {
-            margin-top: 0;
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
         }
 
-        ul {
-            list-style: none;
-            padding: 0;
+        .header h1 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
         }
 
-        ul li {
-            background-color: #2a2a2a;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 5px;
+        .faculty-info {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-item i {
+            color: var(--primary);
+        }
+
+        .email-form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        input, select, textarea {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .template-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .template-btn {
+            padding: 0.5rem 1rem;
+            background: var(--light);
+            border: 1px solid var(--gray);
+            border-radius: 4px;
             cursor: pointer;
+            transition: all 0.3s;
         }
 
-        ul li:hover {
-            background-color: #333;
+        .template-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Generate Email</h1>
+        <div class="glass-card">
+            <div class="header">
+                <h1>Email Generator</h1>
+                <p>Create a professional email to faculty member</p>
+            </div>
 
-        <div class="card">
-            <h2>Professor Search</h2>
-            <input type="text" id="professor-name" placeholder="Enter professor's name">
-            <button id="check-professor">Check Professor</button>
-            <button id="clear-professor">Clear</button>
-            <p id="professor-result"></p>
-            <ul id="professor-list"></ul>
-
-            <!-- Dynamic Professor Details Card -->
-            <div id="professor-details-card" style="display: none; background-color: #1e1e1e; color: #ffffff; border: 1px solid #444; border-radius: 10px; padding: 20px; margin: 10px 0; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-                <p><strong>Name:</strong> <span id="professor-name-detail"></span></p>
-                <p><strong>Position:</strong> <span id="professor-position"></span></p>
-                <p><strong>Campus:</strong> <span id="professor-campus"></span></p>
-                <p id="professor-research" style="display: none;"><strong>Research Interests:</strong> <span id="professor-research-interests"></span></p>
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <a id="professor-scholar" href="#" target="_blank" style="text-decoration: none; color: #ffcc00; display: none;">
-                        <img src="https://img.icons8.com/ios-filled/50/ffcc00/graduation-cap.png" alt="Google Scholar" style="width: 30px; height: 30px;">
-                    </a>
-                    <a id="professor-email" href="#" style="text-decoration: none; color: #ffcc00; display: none;">
-                        <img src="https://img.icons8.com/ios-filled/50/ffcc00/email.png" alt="Email" style="width: 30px; height: 30px;">
-                    </a>
-                    <a id="professor-website" href="#" target="_blank" style="text-decoration: none; color: #ffcc00; display: none;">
-                        <img src="https://img.icons8.com/ios-filled/50/ffcc00/domain.png" alt="Website" style="width: 30px; height: 30px;">
-                    </a>
+            {% if faculty %}
+            <div class="faculty-info">
+                <h2>{{ faculty.Name }}</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span>{{ faculty.Position }}</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>{{ faculty.Email }}</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card">
-            <form id="email-form">
-                <label for="reason">Purpose of Email:</label>
-                <input type="text" id="reason" name="reason" required>
-
-                <div>
-                    <button type="button" id="research-assistant">Research Assistant</button>
-                    <button type="button" id="letter-recommendation">Letter of Recommendation</button>
-                    <button type="button" id="teaching-assistant">Teaching Assistant</button>
+            <form id="emailForm" class="email-form">
+                <div class="form-group">
+                    <label>Select Template</label>
+                    <div class="template-buttons">
+                        <button type="button" class="template-btn" data-template="research">Research Assistant</button>
+                        <button type="button" class="template-btn" data-template="recommendation">Recommendation Letter</button>
+                        <button type="button" class="template-btn" data-template="ta">Teaching Assistant</button>
+                    </div>
                 </div>
 
-                <label for="email-result">Generated Email:</label>
-                <textarea id="email-result" rows="10" cols="50" readonly></textarea>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" required>
+                </div>
 
-                <button type="submit">Generate Email</button>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Send Email
+                </button>
             </form>
+            {% endif %}
         </div>
 
         <div class="card">
@@ -210,50 +276,44 @@
                         });
                         professorList.append(listItem);
                     });
+    document.addEventListener('DOMContentLoaded', function() {
+        const templateButtons = document.querySelectorAll('.template-btn');
+        const subjectInput = document.getElementById('subject');
+        const messageInput = document.getElementById('message');
+        
+        templateButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                const templateType = this.dataset.template;
+                const response = await fetch('/get_template', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: '{{ faculty.Email }}',
+                        template_type: templateType
+                    })
+                });
+                
+                const template = await response.json();
+                if (template.error) {
+                    alert(template.error);
+                    return;
                 }
-            }).fail(function () {
-                $("#professor-result").text("An error occurred while checking the professor.");
+                
+                subjectInput.value = template.subject;
+                messageInput.value = template.body;
+                
+                templateButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
             });
         });
 
-        // Add a clear button to reset the input field
-        $("#clear-professor").on("click", function () {
-            $("#professor-name").val(""); // Clear the input field
-            $("#professor-result").text(""); // Clear the result message
-            $("#professor-list").empty(); // Clear the professor list
-            $("#professor-details-card").hide(); // Hide professor details
-        });
-
-        // Generate email when the form is submitted
-        $("#email-form").on("submit", function (e) {
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
-            const name = $("#professor-name").val();
-            const reason = $("#reason").val();
-
-            $.post("/generate_email", { name: name, reason: reason }, function (data) {
-                if (data.email) {
-                    // Populate the textarea with the generated email
-                    $("#email-result").val(data.email).prop("readonly", false); // Make it editable
-                } else {
-                    $("#email-result").val("An error occurred while generating the email.");
-                }
-            }).fail(function () {
-                $("#email-result").val("An error occurred while generating the email.");
-            });
-        });
-
-        // Add event listeners for predefined purpose buttons
-        $("#research-assistant").on("click", function () {
-            $("#reason").val("Research Assistant");
-        });
-
-        $("#letter-recommendation").on("click", function () {
-            $("#reason").val("Letter of Recommendation");
-        });
-
-        $("#teaching-assistant").on("click", function () {
-            $("#reason").val("Teaching Assistant");
+            const subject = subjectInput.value;
+            const body = messageInput.value;
+            window.location.href = `mailto:{{ faculty.Email }}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         });
 
         // Show the modal when the "Customize Templates" button is clicked
@@ -305,6 +365,7 @@
             $("#template-modal").hide();
             $("#modal-overlay").hide();
         });
+    });
     </script>
 </body>
 </html>
