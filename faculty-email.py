@@ -4,7 +4,7 @@ import pandas as pd
 app = Flask(__name__)
 
 # Load faculty data
-file_path = "khoury_faculty_data.csv"
+file_path = "khoury_faculty_data.csv"  # Updated path
 df = pd.read_csv(file_path)
 
 def get_faculty_data():
