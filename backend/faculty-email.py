@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 import pandas as pd
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../templates')
 
 # Load faculty data
-file_path = "khoury_faculty_data.csv"
+file_path = os.path.join(os.path.dirname(__file__), "data", "khoury_faculty_data.csv")
 df = pd.read_csv(file_path)
 
 def get_faculty_data():
@@ -25,6 +26,11 @@ def send_email():
         script = "".join([f"window.open('{link}', '_blank');" for link in mailto_links])
         return f"<script>{script}</script>"
     return "<script>alert('Please select at least one professor to email.'); window.history.back();</script>"
+
+@app.route('/generate-email/<faculty_email>')
+def generate_email_page(faculty_email):
+    faculty_member = df[df['Email'] == faculty_email].iloc[0] if len(df[df['Email'] == faculty_email]) > 0 else None
+    return render_template('generate-email.html', faculty=faculty_member)
 
 if __name__ == '__main__':
     app.run(debug=True)

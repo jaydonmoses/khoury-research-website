@@ -823,7 +823,9 @@
                                     <a href="{{ faculty['Google Scholar'] }}" target="_blank" title="Google Scholar"><i class="fas fa-graduation-cap"></i></a>
                                     {% endif %}
                                     {% if faculty.Email %}
-                                    <a href="mailto:{{ faculty.Email }}" title="Email"><i class="fas fa-envelope"></i></a>
+                                    <a href="{{ url_for('generate_email_page', faculty_email=faculty.Email) }}" title="Generate Email" target="_blank">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
                                     {% endif %}
                                 </div>
                             </td>
